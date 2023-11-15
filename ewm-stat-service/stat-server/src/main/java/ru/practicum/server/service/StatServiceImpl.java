@@ -7,7 +7,6 @@ import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.server.mapper.HitMapper;
 import ru.practicum.server.repository.StatRepository;
 
-import javax.persistence.EntityManager;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StatServiceImpl implements StatService {
     private final StatRepository statRepository;
-//    private final EntityManager entityManager;
 
     public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -35,14 +33,15 @@ public class StatServiceImpl implements StatService {
         LocalDateTime startTime = LocalDateTime.parse(URLDecoder.decode(start, StandardCharsets.UTF_8), formatter);
         LocalDateTime endTime = LocalDateTime.parse(URLDecoder.decode(end, StandardCharsets.UTF_8), formatter);
         List<ViewStatsDto> viewStatsDtoList;
-        
-        if(!uris.isEmpty()) {
+
+        if (!uris.isEmpty()) {
             viewStatsDtoList = !unique ? statRepository.findAllByTimestampBetweenAndUriIn(startTime, endTime, uris) :
                     statRepository.findAllByTimestampBetweenAndUriInAndIpUnique(startTime, endTime, uris);
         } else {
             viewStatsDtoList = !unique ? statRepository.findAllByTimestampBetween(startTime, endTime) :
                     statRepository.findAllByTimestampBetweenWithUniqueIp(startTime, endTime);
         }
+
         if (viewStatsDtoList.isEmpty()) {
             return Collections.emptyList();
         }
