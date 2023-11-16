@@ -11,6 +11,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 public class StatServiceImpl implements StatService {
     private final StatRepository statRepository;
 
-    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public void postStat(EndpointHitDto endpointHitDto) {
@@ -30,8 +31,16 @@ public class StatServiceImpl implements StatService {
 
     @Override
     public List<ViewStatsDto> getStats(String start, String end, List<String> uris, Boolean unique) {
-        LocalDateTime startTime = LocalDateTime.parse(URLDecoder.decode(start, StandardCharsets.UTF_8), formatter);
-        LocalDateTime endTime = LocalDateTime.parse(URLDecoder.decode(end, StandardCharsets.UTF_8), formatter);
+        LocalDateTime startTime;
+        LocalDateTime endTime;
+
+        try {
+            startTime = LocalDateTime.parse(URLDecoder.decode(start, StandardCharsets.UTF_8), FORMATTER);
+            endTime = LocalDateTime.parse(URLDecoder.decode(end, StandardCharsets.UTF_8), FORMATTER);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Формат времени должен соответствовать yyyy-MM-dd HH:mm:ss");
+        }
+
         List<ViewStatsDto> viewStatsDtoList;
 
         if (!uris.isEmpty()) {

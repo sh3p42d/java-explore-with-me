@@ -16,12 +16,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class EndpointHitDto {
     @NotBlank(message = "App не может быть пустым.")
-    String app;
+    private String app;
     @NotBlank(message = "URI не может быть пустым.")
-    String uri;
+    private String uri;
     @NotBlank(message = "IP не может быть пустым.")
-    String ip;
+    private String ip;
     @NotNull(message = "Timestamp не может быть пустым.")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime timestamp;
+    private LocalDateTime timestamp;
 }
