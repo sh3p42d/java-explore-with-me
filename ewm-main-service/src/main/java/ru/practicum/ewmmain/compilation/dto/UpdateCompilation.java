@@ -16,7 +16,6 @@ import java.util.List;
 public class UpdateCompilation {
     private List<Long> events;
     private Boolean pinned;
-    @NotBlank(message = "Title не может быть пустым.")
     @Size(max = 50, min = 1, message = "Длина строки должна быть от 1 до 50 символов.")
     private String title;
 }

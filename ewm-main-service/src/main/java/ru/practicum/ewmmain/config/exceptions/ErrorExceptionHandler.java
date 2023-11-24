@@ -1,6 +1,7 @@
 package ru.practicum.ewmmain.config.exceptions;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -95,9 +96,9 @@ public class ErrorExceptionHandler {
         return new ErrorResponse("Непредвиденная ошибка: ", e.getMessage());
     }
 
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public ErrorResponse onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-//        return new ErrorResponse("Невалидный параметр: ", e.getMessage());
-//    }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        return new ErrorResponse("Невалидный параметр: ", e.getMessage());
+    }
 }
