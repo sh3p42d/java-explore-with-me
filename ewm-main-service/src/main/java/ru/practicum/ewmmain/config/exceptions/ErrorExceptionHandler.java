@@ -20,6 +20,7 @@ import ru.practicum.ewmmain.user.error.UserExistsException;
 import ru.practicum.ewmmain.user.error.UserNotFoundException;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,12 @@ public class ErrorExceptionHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse errorResponse(EventNotAllowedException e) {
+        return new ErrorResponse("Конфликт у Event: ", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleStatsRequestException(final ClientRequestException e) {
         return new ErrorResponse("Ошибка сервера статистики: ", e.getMessage());
     }
@@ -55,12 +62,9 @@ public class ErrorExceptionHandler {
         return new ErrorResponse("Неправильное время в запросе: ", e.getMessage());
     }
 
-    @ExceptionHandler(value = {
-            EventNotAllowedException.class,
-            RequestNotAllowedException.class
-    })
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse errorResponse(RuntimeException e) {
+    public ErrorResponse errorResponse(RequestNotAllowedException e) {
         return new ErrorResponse("Неверный запрос: ", e.getMessage());
     }
 
@@ -71,7 +75,7 @@ public class ErrorExceptionHandler {
             RequestNotFoundException.class,
             UserNotFoundException.class
     })
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse errorResponse(EntityNotFoundException e) {
         return new ErrorResponse("Не найдено: ", e.getMessage());
     }
@@ -80,6 +84,12 @@ public class ErrorExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMissingServletRequestParameterException(final MissingServletRequestParameterException e) {
         return new ErrorResponse("Нет параметра в запросе: ", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
+        return new ErrorResponse("Нарушено ограничение целостности: ", e.getMessage());
     }
 
     @ExceptionHandler
