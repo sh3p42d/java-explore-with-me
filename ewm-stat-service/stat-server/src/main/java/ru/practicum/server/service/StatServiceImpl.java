@@ -2,8 +2,10 @@ package ru.practicum.server.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStatsDto;
+import ru.practicum.server.config.exceptions.StartTimeAndEndTimeException;
 import ru.practicum.server.mapper.HitMapper;
 import ru.practicum.server.repository.StatRepository;
 
@@ -25,11 +27,13 @@ public class StatServiceImpl implements StatService {
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
+    @Transactional
     public void postStat(EndpointHitDto endpointHitDto) {
         statRepository.save(HitMapper.toHit(endpointHitDto));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ViewStatsDto> getStats(String start, String end, List<String> uris, Boolean unique) {
         LocalDateTime startTime;
         LocalDateTime endTime;
@@ -41,6 +45,7 @@ public class StatServiceImpl implements StatService {
             throw new IllegalArgumentException("Формат времени должен соответствовать yyyy-MM-dd HH:mm:ss");
         }
 
+        checkTime(startTime, endTime);
         List<ViewStatsDto> viewStatsDtoList;
 
         if (!uris.isEmpty()) {
@@ -58,5 +63,15 @@ public class StatServiceImpl implements StatService {
                 .stream()
                 .sorted(Comparator.comparing(ViewStatsDto::getHits).reversed())
                 .collect(Collectors.toList());
+    }
+
+    private void checkTime(LocalDateTime start, LocalDateTime end) {
+        if (start.equals(end)) {
+            throw new StartTimeAndEndTimeException("Время начала не может совпадать с концом.");
+        }
+        if (start.isAfter(end)) {
+            throw new StartTimeAndEndTimeException("Время начала не может быть позже конца.");
+
+        }
     }
 }

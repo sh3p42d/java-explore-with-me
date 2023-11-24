@@ -2,6 +2,7 @@ package ru.practicum.server.config.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -10,7 +11,7 @@ import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestControllerAdvice("ru.practicum")
+@RestControllerAdvice
 public class ErrorExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -19,6 +20,18 @@ public class ErrorExceptionHandler {
                 .map(violation -> new Violation(violation.getPropertyPath().toString(), violation.getMessage()))
                 .collect(Collectors.toList());
         return new ValidationErrorResponse(violations);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMissingServletRequestParameterException(final MissingServletRequestParameterException e) {
+        return new ErrorResponse("Нет параметра в запросе: ", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse errorResponse(StartTimeAndEndTimeException e) {
+        return new ErrorResponse("Неправильное время в запросе: ", e.getMessage());
     }
 
     @ExceptionHandler
