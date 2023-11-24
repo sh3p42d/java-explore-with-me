@@ -45,7 +45,7 @@ public class ErrorExceptionHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse errorResponse(EventNotAllowedException e) {
         return new ErrorResponse("Конфликт у Event: ", e.getMessage());
     }
