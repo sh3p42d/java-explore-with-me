@@ -62,8 +62,9 @@ public class ErrorExceptionHandler {
         return new ErrorResponse("Ошибка сервера статистики: ", e.getMessage());
     }
 
+    // отладка
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ErrorResponse errorResponse(StartTimeAndEndTimeException e) {
         return new ErrorResponse("Неправильное время в запросе: ", e.getMessage());
     }
@@ -80,14 +81,16 @@ public class ErrorExceptionHandler {
         return new ErrorResponse("Не найдено: ", e.getMessage());
     }
 
+    // отладка
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
     public ErrorResponse handleMissingServletRequestParameterException(final MissingServletRequestParameterException e) {
         return new ErrorResponse("Нет параметра в запросе: ", e.getMessage());
     }
 
+    // отладка
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     public ErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
         return new ErrorResponse("Нарушено ограничение целостности: ", e.getMessage());
     }
@@ -98,8 +101,9 @@ public class ErrorExceptionHandler {
         return new ErrorResponse("Непредвиденная ошибка: ", e.getMessage());
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    // отладка
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ValidationErrorResponse onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         final List<Violation> violations = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
