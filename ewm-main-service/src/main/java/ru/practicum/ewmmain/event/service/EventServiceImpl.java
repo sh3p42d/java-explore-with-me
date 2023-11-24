@@ -220,7 +220,7 @@ public class EventServiceImpl implements EventService {
         );
 
         if (event.getState() != EventStateEnum.PUBLISHED) {
-            throw new EventNotAllowedException(event.getState().toString());
+            throw new EventNotFoundException(eventId);
         }
 
         String uri = URI + "/" + eventId;

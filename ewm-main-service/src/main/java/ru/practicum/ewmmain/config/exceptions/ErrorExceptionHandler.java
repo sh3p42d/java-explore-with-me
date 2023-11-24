@@ -51,6 +51,12 @@ public class ErrorExceptionHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse errorResponse(RequestNotAllowedException e) {
+        return new ErrorResponse("Конфликт у Request: ", e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleStatsRequestException(final ClientRequestException e) {
         return new ErrorResponse("Ошибка сервера статистики: ", e.getMessage());
@@ -60,12 +66,6 @@ public class ErrorExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse errorResponse(StartTimeAndEndTimeException e) {
         return new ErrorResponse("Неправильное время в запросе: ", e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse errorResponse(RequestNotAllowedException e) {
-        return new ErrorResponse("Неверный запрос: ", e.getMessage());
     }
 
     @ExceptionHandler(value = {
