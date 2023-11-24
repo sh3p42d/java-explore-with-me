@@ -1,7 +1,6 @@
 package ru.practicum.ewmmain.config.exceptions;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -21,8 +20,6 @@ import ru.practicum.ewmmain.user.error.UserNotFoundException;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ErrorExceptionHandler {
@@ -62,9 +59,8 @@ public class ErrorExceptionHandler {
         return new ErrorResponse("Ошибка сервера статистики: ", e.getMessage());
     }
 
-    // отладка
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse errorResponse(StartTimeAndEndTimeException e) {
         return new ErrorResponse("Неправильное время в запросе: ", e.getMessage());
     }
@@ -81,16 +77,14 @@ public class ErrorExceptionHandler {
         return new ErrorResponse("Не найдено: ", e.getMessage());
     }
 
-    // отладка
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMissingServletRequestParameterException(final MissingServletRequestParameterException e) {
         return new ErrorResponse("Нет параметра в запросе: ", e.getMessage());
     }
 
-    // отладка
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
         return new ErrorResponse("Нарушено ограничение целостности: ", e.getMessage());
     }
@@ -101,13 +95,9 @@ public class ErrorExceptionHandler {
         return new ErrorResponse("Непредвиденная ошибка: ", e.getMessage());
     }
 
-    // отладка
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ValidationErrorResponse onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        final List<Violation> violations = e.getBindingResult().getFieldErrors().stream()
-                .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
-                .collect(Collectors.toList());
-        return new ValidationErrorResponse(violations);
-    }
+//    @ExceptionHandler
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public ErrorResponse onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+//        return new ErrorResponse("Невалидный параметр: ", e.getMessage());
+//    }
 }
