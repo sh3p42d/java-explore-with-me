@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDto> getUsers(List<Long> ids, Integer from, Integer size) {
+    public List<UserDto> getUsers(List<Long> ids, int from, int size) {
         PageRequest page = PageRequest.of(from / size, size);
         List<User> users;
         if (ids.size() != 0) {
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteUser(Long userId) {
+    public void deleteUser(long userId) {
         User userToDelete = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(userId));
         userRepository.deleteById(userId);

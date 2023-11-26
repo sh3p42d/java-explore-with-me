@@ -11,6 +11,7 @@ import ru.practicum.ewmmain.compilation.error.CompilationNotFoundException;
 import ru.practicum.ewmmain.compilation.mapper.CompilationMapper;
 import ru.practicum.ewmmain.compilation.model.Compilation;
 import ru.practicum.ewmmain.compilation.repository.CompilationRepository;
+import ru.practicum.ewmmain.event.dto.EventMinDto;
 import ru.practicum.ewmmain.event.model.Event;
 import ru.practicum.ewmmain.event.repository.EventRepository;
 import ru.practicum.ewmmain.request.model.RequestStatusEnum;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
@@ -31,8 +33,7 @@ public class CompilationServiceImpl implements CompilationService {
     private final RequestRepository requestRepository;
 
     @Override
-    @Transactional(readOnly = true)
-    public List<CompilationDto> getAllCompilations(Boolean pinned, Integer from, Integer size) {
+    public List<CompilationDto> getAllCompilations(Boolean pinned, int from, int size) {
         PageRequest page = PageRequest.of(from / size, size);
         List<Compilation> compilationsFromDb;
 
@@ -49,24 +50,54 @@ public class CompilationServiceImpl implements CompilationService {
         List<CompilationDto> compilationDtoList = compilationsFromDb.stream()
                 .map(CompilationMapper::toCompilationDto)
                 .collect(Collectors.toList());
-        compilationDtoList.forEach(
-                compilationDto -> compilationDto.getEvents().forEach(
-                        eventShortDto -> eventShortDto.setConfirmedRequests(
-                                countConfirmedForEventShortDto(eventShortDto.getId()))));
+
+        List<Long> eventIdList = requestRepository.findAllByStatus(RequestStatusEnum.CONFIRMED)
+                .stream()
+                .map(request -> request.getEvent().getId())
+                .collect(Collectors.toList());
+
+        for (CompilationDto compilationDto : compilationDtoList) {
+            for (EventMinDto event : compilationDto.getEvents()) {
+                Long eventId = event.getId();
+
+                int count = Collections.frequency(eventIdList, eventId);
+                if (count > 0) {
+                    event.setConfirmedRequests(count);
+                }
+            }
+        }
+
+//        compilationDtoList.forEach(
+//                compilationDto -> compilationDto.getEvents().forEach(
+//                        eventShortDto -> eventShortDto.setConfirmedRequests(
+//                                countConfirmedForEventShortDto(eventShortDto.getId()))));
         return compilationDtoList;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public CompilationDto getOneCompilation(Long compId) {
+    public CompilationDto getOneCompilation(long compId) {
         Compilation compilation = compilationRepository.findById(compId).orElseThrow(
                 () -> new CompilationNotFoundException(compId)
         );
 
         CompilationDto compilationDto = CompilationMapper.toCompilationDto(compilation);
 
-        compilationDto.getEvents().forEach(eventShortDto -> eventShortDto.setConfirmedRequests(
-                countConfirmedForEventShortDto(eventShortDto.getId())));
+        List<Long> eventIdList = requestRepository.findAllByStatus(RequestStatusEnum.CONFIRMED)
+                .stream()
+                .map(request -> request.getEvent().getId())
+                .collect(Collectors.toList());
+
+        for (EventMinDto event : compilationDto.getEvents()) {
+            Long eventId = event.getId();
+
+            int count = Collections.frequency(eventIdList, eventId);
+            if (count > 0) {
+                event.setConfirmedRequests(count);
+            }
+        }
+
+//        compilationDto.getEvents().forEach(eventShortDto -> eventShortDto.setConfirmedRequests(
+//                countConfirmedForEventShortDto(eventShortDto.getId())));
 
         return compilationDto;
     }
@@ -85,7 +116,7 @@ public class CompilationServiceImpl implements CompilationService {
             throw new CompilationExistsException(compilationByName.getTitle());
         }
 
-        if (newCompilationDto.getEvents() != null) {
+        if (newCompilationDto.getEvents() != null || !newCompilationDto.getEvents().isEmpty()) {
             Set<Event> events = eventRepository.findAllByIdIn(newCompilationDto.getEvents());
             compilation.setEvents(events);
         }
@@ -97,7 +128,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional
-    public CompilationDto patchCompilation(Long compId, UpdateCompilation updateCompilation) {
+    public CompilationDto updateCompilation(long compId, UpdateCompilation updateCompilation) {
         Compilation compilation = compilationRepository.findById(compId).orElseThrow(
                 () -> new CompilationNotFoundException(compId)
         );
@@ -130,7 +161,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional
-    public void deleteCompilation(Long compId) {
+    public void deleteCompilation(long compId) {
         compilationRepository.findById(compId).orElseThrow(
                 () -> new CompilationNotFoundException(compId)
         );

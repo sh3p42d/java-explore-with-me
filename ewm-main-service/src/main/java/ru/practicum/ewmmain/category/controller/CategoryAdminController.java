@@ -24,14 +24,14 @@ public class CategoryAdminController {
     }
 
     @PatchMapping("/{catId}")
-    public CategoryDto patchCategory(@PathVariable Long catId,
+    public CategoryDto patchCategory(@PathVariable long catId,
                                      @Valid @RequestBody NewCategoryDto category) {
-        return categoryService.patchCategory(catId, category);
+        return categoryService.updateCategory(catId, category);
     }
 
     @DeleteMapping("/{catId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable Long catId) {
+    public void deleteCategory(@PathVariable long catId) {
         categoryService.deleteCategory(catId);
     }
 }

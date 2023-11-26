@@ -1,10 +1,12 @@
 package ru.practicum.ewmmain.user.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.ewmmain.user.dto.NewUserDto;
 import ru.practicum.ewmmain.user.dto.UserDto;
 import ru.practicum.ewmmain.user.dto.UserMinDto;
 import ru.practicum.ewmmain.user.model.User;
 
+@UtilityClass
 public class UserMapper {
     public static User toUser(UserDto userDto) {
         return User.builder()

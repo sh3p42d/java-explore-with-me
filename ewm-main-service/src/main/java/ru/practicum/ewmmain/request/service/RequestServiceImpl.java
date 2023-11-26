@@ -38,7 +38,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ParticipationRequestDto> getAllByUserId(Long userId) {
+    public List<ParticipationRequestDto> getAllByUserId(long userId) {
         checkUser(userId);
         List<Request> requests = requestRepository.findAllByRequester_Id(userId);
         if (requests.isEmpty()) {
@@ -52,7 +52,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     @Transactional
-    public ParticipationRequestDto addRequest(Long userId, Long eventId) {
+    public ParticipationRequestDto addRequest(long userId, long eventId) {
         Event event = checkEvent(eventId);
         User user = checkUser(userId);
 
@@ -93,7 +93,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     @Transactional
-    public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
+    public ParticipationRequestDto cancelRequest(long userId, long requestId) {
         checkUser(userId);
         Request request = requestRepository.findById(requestId).orElseThrow(
                 () -> new RequestNotFoundException(requestId));
@@ -112,7 +112,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ParticipationRequestDto> getRequestsForUsersEvent(Long userId, Long eventId) {
+    public List<ParticipationRequestDto> getRequestsForUsersEvent(long userId, long eventId) {
         Event event = checkEvent(eventId);
         if (!event.getInitiator().getId().equals(userId)) {
             throw new RequestNotAllowedException(eventId, String.format("User с id=%s не организатор Event", userId));
@@ -125,7 +125,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     @Transactional
-    public RequestStatusUpdateApprove updateRequests(Long userId, Long eventId, RequestStatusUpdate requestStatusUpdate) {
+    public RequestStatusUpdateApprove updateRequests(long userId, long eventId, RequestStatusUpdate requestStatusUpdate) {
         String statusParam = requestStatusUpdate.getStatus();
         RequestStatusEnum newStatus = checkStatus(statusParam);
 
@@ -191,12 +191,12 @@ public class RequestServiceImpl implements RequestService {
         }
     }
 
-    private User checkUser(Long userId) {
+    private User checkUser(long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(userId));
     }
 
-    private Event checkEvent(Long eventId) {
+    private Event checkEvent(long eventId) {
         return eventRepository.findById(eventId).orElseThrow(
                 () -> new EventNotFoundException(eventId));
     }

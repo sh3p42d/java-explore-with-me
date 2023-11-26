@@ -24,14 +24,14 @@ public class RequestPrivateController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ParticipationRequestDto add(@PathVariable Long userId,
-                                       @NotNull(message = "Отсутствует id события в запросе") @RequestParam Long eventId) {
+    public ParticipationRequestDto add(@PathVariable long userId,
+                                       @NotNull(message = "Отсутствует id события в запросе") @RequestParam long eventId) {
         return service.addRequest(userId, eventId);
     }
 
     @PatchMapping("/{requestId}/cancel")
-    public ParticipationRequestDto cancel(@PathVariable Long userId,
-                                          @PathVariable Long requestId) {
+    public ParticipationRequestDto cancel(@PathVariable long userId,
+                                          @PathVariable long requestId) {
         return service.cancelRequest(userId, requestId);
     }
 }

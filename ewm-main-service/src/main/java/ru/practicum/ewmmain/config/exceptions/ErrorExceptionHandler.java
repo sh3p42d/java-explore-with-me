@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.client.config.exceptions.ClientRequestException;
 import ru.practicum.ewmmain.category.error.CategoryExistsException;
 import ru.practicum.ewmmain.category.error.CategoryNotFoundException;
+import ru.practicum.ewmmain.category.error.CategoryWithEventsException;
 import ru.practicum.ewmmain.compilation.error.CompilationExistsException;
 import ru.practicum.ewmmain.compilation.error.CompilationNotFoundException;
 import ru.practicum.ewmmain.event.error.EventNotAllowedException;
@@ -29,6 +30,13 @@ public class ErrorExceptionHandler {
     public ErrorResponse errorResponse(CategoryExistsException e) {
         return new ErrorResponse("Конфликт у Category: ", e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse errorResponse(CategoryWithEventsException e) {
+        return new ErrorResponse("Конфликт у Category: ", e.getMessage());
+    }
+
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)

@@ -1,5 +1,6 @@
 package ru.practicum.ewmmain.request.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.ewmmain.request.dto.ParticipationRequestDto;
 import ru.practicum.ewmmain.request.dto.RequestStatusUpdateApprove;
 import ru.practicum.ewmmain.request.model.Request;
@@ -8,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@UtilityClass
 public class RequestMapper {
     public static ParticipationRequestDto toParticipationRequestDto(Request request) {
         return ParticipationRequestDto.builder()

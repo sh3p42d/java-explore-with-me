@@ -24,14 +24,14 @@ public class CompilationPublicController {
     @GetMapping
     public List<CompilationDto> getAllCompilations(@RequestParam(required = false) Boolean pinned,
                                                    @PositiveOrZero(message = FROM_ERROR_MESSAGE)
-                                                   @RequestParam(defaultValue = "0") Integer from,
+                                                   @RequestParam(defaultValue = "0") int from,
                                                    @Positive(message = SIZE_ERROR_MESSAGE)
-                                                   @RequestParam(defaultValue = "10") Integer size) {
+                                                   @RequestParam(defaultValue = "10") int size) {
         return compilationService.getAllCompilations(pinned, from, size);
     }
 
     @GetMapping("/{compId}")
-    public CompilationDto getOneCompilation(@PathVariable Long compId) {
+    public CompilationDto getOneCompilation(@PathVariable long compId) {
         return compilationService.getOneCompilation(compId);
     }
 }

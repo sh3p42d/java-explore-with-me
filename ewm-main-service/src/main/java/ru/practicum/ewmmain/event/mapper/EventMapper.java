@@ -1,6 +1,6 @@
 package ru.practicum.ewmmain.event.mapper;
 
-
+import lombok.experimental.UtilityClass;
 import ru.practicum.ewmmain.category.mapper.CategoryMapper;
 import ru.practicum.ewmmain.event.dto.EventDto;
 import ru.practicum.ewmmain.event.dto.EventMinDto;
@@ -9,6 +9,7 @@ import ru.practicum.ewmmain.event.model.Event;
 import ru.practicum.ewmmain.location.mapper.LocationMapper;
 import ru.practicum.ewmmain.user.mapper.UserMapper;
 
+@UtilityClass
 public class EventMapper {
     public static EventMinDto toEventMinDto(Event event) {
         return EventMinDto.builder()

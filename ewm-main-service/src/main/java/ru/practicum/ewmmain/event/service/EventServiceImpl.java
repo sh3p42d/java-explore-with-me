@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @ComponentScan(basePackages = "ru.practicum.client")
+@Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
     private static final String URI = "/events";
     private static final String APP = "ewm-main-service";
@@ -59,14 +60,13 @@ public class EventServiceImpl implements EventService {
     private final LocationRepository locationRepository;
 
     @Override
-    @Transactional(readOnly = true)
     public List<EventDto> getAllForAdmin(List<Long> users,
                                          List<String> states,
                                          List<Long> categories,
                                          LocalDateTime rangeStart,
                                          LocalDateTime rangeEnd,
-                                         Integer from,
-                                         Integer size) {
+                                         int from,
+                                         int size) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Event> criteriaQuery = criteriaBuilder.createQuery(Event.class);
         Root<Event> root = criteriaQuery.from(Event.class);
@@ -99,7 +99,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventDto patchEventForAdmin(Long eventId,
+    public EventDto patchEventForAdmin(long eventId,
                                        UpdateEventAdmin updateEventAdmin) {
         Event event = eventRepository.findById(eventId).orElseThrow(
                 () -> new EventNotFoundException(eventId)
@@ -142,7 +142,6 @@ public class EventServiceImpl implements EventService {
 
     //отправляет запрос к статистике
     @Override
-    @Transactional(readOnly = true)
     public List<EventMinDto> getAllPublic(String text,
                                           List<Long> categories,
                                           Boolean paid,
@@ -150,8 +149,8 @@ public class EventServiceImpl implements EventService {
                                           LocalDateTime rangeEnd,
                                           Boolean onlyAvailable,
                                           String sortParam,
-                                          Integer from,
-                                          Integer size,
+                                          int from,
+                                          int size,
                                           HttpServletRequest request) {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -206,15 +205,13 @@ public class EventServiceImpl implements EventService {
             }
         }
 
-        addEndpointHit(URI, request);
         return eventDtoList.stream()
                 .map(EventMapper::toEventMinDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public EventDto getOneEventPublic(Long eventId, HttpServletRequest request) {
+    public EventDto getOneEventPublic(long eventId, HttpServletRequest request) {
         Event event = eventRepository.findById(eventId).orElseThrow(
                 () -> new EventNotFoundException(eventId)
         );
@@ -223,9 +220,6 @@ public class EventServiceImpl implements EventService {
             throw new EventNotFoundException(eventId);
         }
 
-        String uri = URI + "/" + eventId;
-        addEndpointHit(uri, request);
-
         EventDto eventFullDto = makeFullResponseDto(event);
         eventFullDto.setConfirmedRequests(countConfirmedForEventDto(eventId));
 
@@ -233,8 +227,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<EventDto> getByUserId(Long userId, Integer from, Integer size) {
+    public List<EventDto> getByUserId(long userId, int from, int size) {
         PageRequest page = PageRequest.of(from / size, size);
         List<Event> events = eventRepository.findAllByInitiator_Id(userId, page).getContent();
 
@@ -249,15 +242,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public EventDto getUsersEventById(Long userId, Long eventId) {
+    public EventDto getUsersEventById(long userId, long eventId) {
         Event event = eventRepository.findByIdAndInitiator_Id(eventId, userId);
         return makeFullResponseDto(event);
     }
 
     @Override
     @Transactional
-    public EventDto add(Long userId, NewEventDto newEventDto) {
+    public EventDto add(long userId, NewEventDto newEventDto) {
         if (newEventDto.getRequestModeration() == null) {
             newEventDto.setRequestModeration(true);
         }
@@ -296,7 +288,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventDto update(Long userId, Long eventId, UpdateEventPublic updateEventPublic) {
+    public EventDto update(long userId, long eventId, UpdateEventPublic updateEventPublic) {
         Event event = eventRepository.findById(eventId).orElseThrow(
                 () -> new EventNotFoundException(eventId));
         if (event.getState() == EventStateEnum.PUBLISHED) {
@@ -391,7 +383,7 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private void addEndpointHit(String uri, HttpServletRequest request) {
+    public void addEndpointHit(String uri, HttpServletRequest request) {
         String ip = request.getRemoteAddr();
         EndpointHitDto endpointHitDto = EndpointHitDto.builder()
                 .app(APP)
@@ -437,7 +429,7 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toEventDto(event, confirmedRequests, views);
     }
 
-    public static long getEventId(ViewStatsDto viewStatsDto) {
+    private static long getEventId(ViewStatsDto viewStatsDto) {
         StringTokenizer tokenizer = new StringTokenizer(viewStatsDto.getUri(), "/");
         if (!tokenizer.nextToken().equals("events")) {
             throw new ClientRequestException("Ошибка запроса статистики");

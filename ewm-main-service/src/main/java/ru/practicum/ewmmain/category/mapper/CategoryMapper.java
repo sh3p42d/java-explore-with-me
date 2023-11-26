@@ -1,9 +1,11 @@
 package ru.practicum.ewmmain.category.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.ewmmain.category.dto.CategoryDto;
 import ru.practicum.ewmmain.category.dto.NewCategoryDto;
 import ru.practicum.ewmmain.category.model.Category;
 
+@UtilityClass
 public class CategoryMapper {
 
     public static Category toCategory(CategoryDto categoryDto) {

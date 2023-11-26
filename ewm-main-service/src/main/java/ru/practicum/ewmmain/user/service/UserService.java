@@ -8,7 +8,7 @@ import java.util.List;
 public interface UserService {
     UserDto addUser(NewUserDto newUserDto);
 
-    List<UserDto> getUsers(List<Long> ids, Integer from, Integer size);
+    List<UserDto> getUsers(List<Long> ids, int from, int size);
 
-    void deleteUser(Long userId);
+    void deleteUser(long userId);
 }

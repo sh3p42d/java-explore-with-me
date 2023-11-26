@@ -20,14 +20,14 @@ public class CategoryPublicController {
 
     @GetMapping
     public List<CategoryDto> getAllCategories(@PositiveOrZero(message = ErrorMessages.FROM_ERROR_MESSAGE)
-                                              @RequestParam(defaultValue = "0") Integer from,
+                                              @RequestParam(defaultValue = "0") int from,
                                               @Positive(message = ErrorMessages.SIZE_ERROR_MESSAGE)
-                                              @RequestParam(defaultValue = "10") Integer size) {
+                                              @RequestParam(defaultValue = "10") int size) {
         return categoryService.getAllCategories(from, size);
     }
 
     @GetMapping("/{catId}")
-    public CategoryDto getOneCategory(@PathVariable Long catId) {
+    public CategoryDto getOneCategory(@PathVariable long catId) {
         return categoryService.getOneCategory(catId);
     }
 }

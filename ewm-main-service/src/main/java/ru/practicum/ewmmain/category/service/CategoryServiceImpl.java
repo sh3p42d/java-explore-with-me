@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmmain.category.dto.NewCategoryDto;
 import ru.practicum.ewmmain.category.error.CategoryExistsException;
 import ru.practicum.ewmmain.category.error.CategoryNotFoundException;
+import ru.practicum.ewmmain.category.error.CategoryWithEventsException;
 import ru.practicum.ewmmain.category.mapper.CategoryMapper;
 import ru.practicum.ewmmain.category.model.Category;
 import ru.practicum.ewmmain.category.repository.CategoryRepository;
@@ -19,14 +20,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
 
     @Override
-    @Transactional(readOnly = true)
-    public List<CategoryDto> getAllCategories(Integer from, Integer size) {
+    public List<CategoryDto> getAllCategories(int from, int size) {
         PageRequest page = PageRequest.of(from / size, size);
         List<Category> categories = categoryRepository.findAll(page).getContent();
         if (categories.isEmpty()) {
@@ -38,8 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public CategoryDto getOneCategory(Long catId) {
+    public CategoryDto getOneCategory(long catId) {
         return CategoryMapper.toCategoryDto(categoryRepository.findById(catId)
                 .orElseThrow(() -> new CategoryNotFoundException(catId)));
     }
@@ -60,7 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public CategoryDto patchCategory(Long catId, NewCategoryDto category) {
+    public CategoryDto updateCategory(long catId, NewCategoryDto category) {
         Category categoryToPatch = categoryRepository.findById(catId)
                 .orElseThrow(() -> new CategoryNotFoundException(catId));
 
@@ -84,14 +84,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public void deleteCategory(Long catId) {
+    public void deleteCategory(long catId) {
         categoryRepository.findById(catId)
                 .orElseThrow(() -> new CategoryNotFoundException(catId));
         Integer eventsInCategory = eventRepository.countAllByCategory_Id(catId);
         if (eventsInCategory == 0) {
             categoryRepository.deleteById(catId);
         } else {
-            throw new CategoryExistsException(catId);
+            throw new CategoryWithEventsException(catId);
         }
     }
 }

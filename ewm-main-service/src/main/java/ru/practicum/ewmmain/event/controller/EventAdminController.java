@@ -39,14 +39,14 @@ public class EventAdminController {
                                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                                LocalDateTime rangeEnd,
                                                @PositiveOrZero(message = FROM_ERROR_MESSAGE)
-                                               @RequestParam(defaultValue = "0") Integer from,
+                                               @RequestParam(defaultValue = "0") int from,
                                                @Positive(message = SIZE_ERROR_MESSAGE)
-                                               @RequestParam(defaultValue = "10") Integer size) {
+                                               @RequestParam(defaultValue = "10") int size) {
         return eventService.getAllForAdmin(users, states, categories, rangeStart, rangeEnd, from, size);
     }
 
     @PatchMapping("/{eventId}")
-    public EventDto patchEventForAdmin(@PathVariable Long eventId,
+    public EventDto patchEventForAdmin(@PathVariable long eventId,
                                        @Valid @RequestBody UpdateEventAdmin event) {
         return eventService.patchEventForAdmin(eventId, event);
     }

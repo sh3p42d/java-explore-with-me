@@ -7,19 +7,21 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
-    List<EventDto> getAllForAdmin(List<Long> users, List<String> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
+    List<EventDto> getAllForAdmin(List<Long> users, List<String> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size);
 
-    EventDto patchEventForAdmin(Long eventId, UpdateEventAdmin updateEventAdmin);
+    EventDto patchEventForAdmin(long eventId, UpdateEventAdmin updateEventAdmin);
 
-    List<EventMinDto> getAllPublic(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, String sortParam, Integer from, Integer size, HttpServletRequest request);
+    List<EventMinDto> getAllPublic(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, String sortParam, int from, int size, HttpServletRequest request);
 
-    EventDto getOneEventPublic(Long eventId, HttpServletRequest request);
+    EventDto getOneEventPublic(long eventId, HttpServletRequest request);
 
-    List<EventDto> getByUserId(Long userId, Integer from, Integer size);
+    List<EventDto> getByUserId(long userId, int from, int size);
 
-    EventDto getUsersEventById(Long userId, Long eventId);
+    EventDto getUsersEventById(long userId, long eventId);
 
-    EventDto add(Long userId, NewEventDto newEventDto);
+    EventDto add(long userId, NewEventDto newEventDto);
 
-    EventDto update(Long userId, Long eventId, UpdateEventPublic updateEventPublic);
+    EventDto update(long userId, long eventId, UpdateEventPublic updateEventPublic);
+
+    void addEndpointHit(String uri, HttpServletRequest request);
 }

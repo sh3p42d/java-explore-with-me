@@ -1,5 +1,6 @@
 package ru.practicum.ewmmain.compilation.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.ewmmain.compilation.dto.CompilationDto;
 import ru.practicum.ewmmain.compilation.dto.NewCompilationDto;
 import ru.practicum.ewmmain.compilation.model.Compilation;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@UtilityClass
 public class CompilationMapper {
     public static CompilationDto toCompilationDto(Compilation compilation) {
         List<EventMinDto> eventMinDtoList = new ArrayList<>();

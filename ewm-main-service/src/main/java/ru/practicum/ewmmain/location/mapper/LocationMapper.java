@@ -1,8 +1,10 @@
 package ru.practicum.ewmmain.location.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.ewmmain.location.dto.LocationDto;
 import ru.practicum.ewmmain.location.model.Location;
 
+@UtilityClass
 public class LocationMapper {
     public static LocationDto toLocationDto(Location location) {
         return LocationDto.builder()

@@ -25,14 +25,14 @@ public class CompilationAdminController {
     }
 
     @PatchMapping("/{compId}")
-    public CompilationDto patchCompilation(@PathVariable Long compId,
+    public CompilationDto patchCompilation(@PathVariable long compId,
                                            @Valid @RequestBody UpdateCompilation updateCompilation) {
-        return compilationService.patchCompilation(compId, updateCompilation);
+        return compilationService.updateCompilation(compId, updateCompilation);
     }
 
     @DeleteMapping("/{compId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCompilation(@PathVariable Long compId) {
+    public void deleteCompilation(@PathVariable long compId) {
         compilationService.deleteCompilation(compId);
     }
 }
