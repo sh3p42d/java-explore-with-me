@@ -25,7 +25,7 @@ public class EventPublicController {
     private final EventService eventService;
 
     @GetMapping
-    public List<EventMinDto> getAllEventsPublic(@RequestParam(required = false) @Pattern(regexp = "^[a-zA-Z]]{1,2000}$") String text,
+    public List<EventMinDto> getAllEventsPublic(@RequestParam(required = false) @Pattern(regexp = "^[a-zA-Z]]{0,2000}$") String text,
                                                 @RequestParam(required = false) List<Long> categories,
                                                 @RequestParam(required = false) Boolean paid,
                                                 @RequestParam(required = false) @Past @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,

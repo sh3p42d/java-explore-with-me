@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import ru.practicum.ewmmain.compilation.dto.NewCompilationDto;
 import ru.practicum.ewmmain.compilation.dto.UpdateCompilation;
 import ru.practicum.ewmmain.compilation.error.CompilationExistsException;
@@ -116,7 +117,7 @@ public class CompilationServiceImpl implements CompilationService {
             throw new CompilationExistsException(compilationByName.getTitle());
         }
 
-        if (newCompilationDto.getEvents() != null || !newCompilationDto.getEvents().isEmpty()) {
+        if (!CollectionUtils.isEmpty(newCompilationDto.getEvents())) {
             Set<Event> events = eventRepository.findAllByIdIn(newCompilationDto.getEvents());
             compilation.setEvents(events);
         }
