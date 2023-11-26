@@ -91,7 +91,10 @@ public class EventServiceImpl implements EventService {
 
         List<Event> events = getEvents(rangeStart, rangeEnd, from, size, criteriaBuilder, root, select, predicates);
 
-        return makeListFullResponseDto(events);
+        return events
+                .stream()
+                .map(this::makeFullResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -178,7 +181,10 @@ public class EventServiceImpl implements EventService {
             return Collections.emptyList();
         }
 
-        List<EventDto> eventDtoList = makeListFullResponseDto(events);
+        List<EventDto> eventDtoList = events
+                .stream()
+                .map(this::makeFullResponseDto)
+                .collect(Collectors.toList());
 
         if (onlyAvailable) {
             eventDtoList = eventDtoList.stream()
@@ -229,7 +235,10 @@ public class EventServiceImpl implements EventService {
             return Collections.emptyList();
         }
 
-        return makeListFullResponseDto(events);
+        return events
+                .stream()
+                .map(this::makeFullResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -398,31 +407,6 @@ public class EventServiceImpl implements EventService {
 
     private Integer countConfirmedForEventDto(Long eventId) {
         return requestRepository.countAllByStatusAndEvent_Id(RequestStatusEnum.CONFIRMED, eventId);
-    }
-
-    private List<EventDto> makeListFullResponseDto(List<Event> events) {
-        List<EventDto> eventDtoList = new ArrayList<>();
-        List<ViewStatsDto> viewStatsDto = statsRequestService.makeStatRequest(events);
-
-        for (int i = 0; i < events.size(); i++) {
-            int confirmedRequests = countConfirmedForEventDto(events.get(i).getId());
-            long views = 0;
-            if (events.get(i).getState() == EventStateEnum.PUBLISHED) {
-                if (!viewStatsDto.isEmpty()) {
-                    long eventId = getEventId(viewStatsDto.get(i));
-                    if (events.get(i).getId() != eventId) {
-                        throw new ClientRequestException(
-                                String.format("Ошибка запроса статистики: запрошенный id %d не соответствует возвращенному %d",
-                                        events.get(i).getId(), eventId)
-                        );
-                    }
-                }
-                views = viewStatsDto.isEmpty() ? 0 : viewStatsDto.get(0).getHits();
-            }
-            eventDtoList.add(EventMapper.toEventDto(events.get(i), confirmedRequests, views));
-        }
-
-        return eventDtoList;
     }
 
     private EventDto makeFullResponseDto(Event event) {
