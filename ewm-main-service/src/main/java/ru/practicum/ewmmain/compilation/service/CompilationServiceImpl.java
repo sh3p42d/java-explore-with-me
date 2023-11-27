@@ -68,10 +68,6 @@ public class CompilationServiceImpl implements CompilationService {
             }
         }
 
-//        compilationDtoList.forEach(
-//                compilationDto -> compilationDto.getEvents().forEach(
-//                        eventShortDto -> eventShortDto.setConfirmedRequests(
-//                                countConfirmedForEventShortDto(eventShortDto.getId()))));
         return compilationDtoList;
     }
 
@@ -96,9 +92,6 @@ public class CompilationServiceImpl implements CompilationService {
                 event.setConfirmedRequests(count);
             }
         }
-
-//        compilationDto.getEvents().forEach(eventShortDto -> eventShortDto.setConfirmedRequests(
-//                countConfirmedForEventShortDto(eventShortDto.getId())));
 
         return compilationDto;
     }
