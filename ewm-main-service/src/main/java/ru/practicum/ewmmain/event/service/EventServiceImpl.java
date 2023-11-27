@@ -422,23 +422,28 @@ public class EventServiceImpl implements EventService {
     private List<EventDto> makeListFullResponseDto(List<Event> events) {
         List<EventDto> eventDtoList = new ArrayList<>();
         List<ViewStatsDto> viewStatsDto = statsRequestService.makeStatRequest(events);
+        List<Long> viewStatsDtoIdList = new ArrayList<>();
 
-        for (int i = 0; i < events.size(); i++) {
-            int confirmedRequests = countConfirmedForEventDto(events.get(i).getId());
+        for (ViewStatsDto statsDto : viewStatsDto) {
+            viewStatsDtoIdList.add(getEventId(statsDto));
+        }
+
+        for (Event event : events) {
+            int confirmedRequests = countConfirmedForEventDto(event.getId());
             long views = 0;
-            if (events.get(i).getState() == EventStateEnum.PUBLISHED) {
-                if (!viewStatsDto.isEmpty()) {
-                    long eventId = getEventId(viewStatsDto.get(i));
-                    if (events.get(i).getId() != eventId) {
-                        throw new ClientRequestException(
-                                String.format("Ошибка запроса статистики: запрошенный id %d не соответствует возвращенному %d",
-                                        events.get(i).getId(), eventId)
-                        );
-                    }
+
+            if (viewStatsDtoIdList.contains(event.getId())) {
+                viewStatsDtoIdList.remove(event.getId());
+                if (event.getState() == EventStateEnum.PUBLISHED) {
+                    int index = viewStatsDtoIdList.indexOf(event.getId());
+                    views = viewStatsDto.get(index).getHits();
                 }
-                views = viewStatsDto.isEmpty() ? 0 : viewStatsDto.get(i).getHits();
             }
-            eventDtoList.add(EventMapper.toEventDto(events.get(i), confirmedRequests, views));
+            eventDtoList.add(EventMapper.toEventDto(event, confirmedRequests, views));
+        }
+
+        if (!viewStatsDtoIdList.isEmpty()) {
+            throw new ClientRequestException("Данных в статистике больше, чем запрашивалось");
         }
 
         return eventDtoList;
