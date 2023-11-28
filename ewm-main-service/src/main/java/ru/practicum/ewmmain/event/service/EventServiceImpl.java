@@ -438,12 +438,6 @@ public class EventServiceImpl implements EventService {
             }
         }
 
-        System.out.println("ЭТО ДЛЯ ОТЛАДКИ");
-        System.out.println(events);
-        System.out.println(confirmedRequestCountMap);
-        System.out.println(viewStatsDto);
-
-        int i = 0;
         for (Event event : events) {
             int confirmedRequests = confirmedRequestCountMap.getOrDefault(event.getId(), List.of()).size();
             long views = 0;
@@ -451,10 +445,8 @@ public class EventServiceImpl implements EventService {
                 views = viewStatsDto.get(viewStatsIds.indexOf(event.getId())).getHits();
             }
             eventDtoList.add(EventMapper.toEventDto(event, confirmedRequests, views));
-            i++;
         }
 
-        System.out.println(eventDtoList);
         return eventDtoList;
     }
 
