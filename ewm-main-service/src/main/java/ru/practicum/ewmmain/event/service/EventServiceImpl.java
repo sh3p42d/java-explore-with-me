@@ -22,6 +22,7 @@ import ru.practicum.ewmmain.event.repository.EventRepository;
 import ru.practicum.ewmmain.location.mapper.LocationMapper;
 import ru.practicum.ewmmain.location.model.Location;
 import ru.practicum.ewmmain.location.repository.LocationRepository;
+import ru.practicum.ewmmain.request.model.Request;
 import ru.practicum.ewmmain.request.model.RequestStatusEnum;
 import ru.practicum.ewmmain.request.repository.RequestRepository;
 import ru.practicum.ewmmain.stat.StatisticRequestService;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
 @ComponentScan(basePackages = "ru.practicum.client")
 @Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
+    private static final String URI = "/events";
     private static final String APP = "ewm-main-service";
 
     private final StatClient client;
@@ -90,7 +92,7 @@ public class EventServiceImpl implements EventService {
 
         List<Event> events = getEvents(rangeStart, rangeEnd, from, size, criteriaBuilder, root, select, predicates);
 
-        return makeListFullResponseDto(events);
+        return makeFullResponseDtoList(events);
     }
 
     @Override
@@ -177,7 +179,7 @@ public class EventServiceImpl implements EventService {
             return Collections.emptyList();
         }
 
-        List<EventDto> eventDtoList = makeListFullResponseDto(events);
+        List<EventDto> eventDtoList = makeFullResponseDtoList(events);
 
         if (onlyAvailable) {
             eventDtoList = eventDtoList.stream()
@@ -228,7 +230,7 @@ public class EventServiceImpl implements EventService {
             return Collections.emptyList();
         }
 
-        return makeListFullResponseDto(events);
+        return makeFullResponseDtoList(events);
     }
 
     @Override
@@ -419,33 +421,29 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toEventDto(event, confirmedRequests, views);
     }
 
-    private List<EventDto> makeListFullResponseDto(List<Event> events) {
+    private Map<Long, List<Request>> countConfirmedForEventList(List<Event> events) {
+        List<Request> requests = requestRepository.findAllByStatusAndEvent_IdIn(RequestStatusEnum.CONFIRMED, events
+                .stream().map(Event::getId).collect(Collectors.toList()));
+        return requests.stream().collect(Collectors.groupingBy(r -> r.getEvent().getId()));
+    }
+
+    private List<EventDto> makeFullResponseDtoList(List<Event> events) {
         List<EventDto> eventDtoList = new ArrayList<>();
+        Map<Long, List<Request>> confirmedRequestCountMap = countConfirmedForEventList(events);
         List<ViewStatsDto> viewStatsDto = statsRequestService.makeStatRequest(events);
-        List<Long> viewStatsDtoIdList = new ArrayList<>();
 
-        for (ViewStatsDto statsDto : viewStatsDto) {
-            viewStatsDtoIdList.add(getEventId(statsDto));
-        }
+        System.out.println("ЭТО ДЛЯ ОТЛАДКИ");
+        System.out.println(events);
+        System.out.println(confirmedRequestCountMap);
+        System.out.println(viewStatsDto);
 
+        int i = 0;
         for (Event event : events) {
-            int confirmedRequests = countConfirmedForEventDto(event.getId());
-            long views = 0;
-
-            if (viewStatsDtoIdList.contains(event.getId())) {
-                if (event.getState() == EventStateEnum.PUBLISHED) {
-                    int index = viewStatsDtoIdList.indexOf(event.getId());
-                    views = viewStatsDto.get(index).getHits();
-                    viewStatsDtoIdList.remove(event.getId());
-                }
-            }
+            int confirmedRequests = confirmedRequestCountMap.getOrDefault(event.getId(), List.of()).size();
+            long views = viewStatsDto.isEmpty() ? 0 : viewStatsDto.get(i).getHits();
             eventDtoList.add(EventMapper.toEventDto(event, confirmedRequests, views));
+            i++;
         }
-
-        if (!viewStatsDtoIdList.isEmpty()) {
-            throw new ClientRequestException("Данных в статистике больше, чем запрашивалось");
-        }
-
         return eventDtoList;
     }
 
