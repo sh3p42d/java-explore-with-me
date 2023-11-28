@@ -431,6 +431,12 @@ public class EventServiceImpl implements EventService {
         List<EventDto> eventDtoList = new ArrayList<>();
         Map<Long, List<Request>> confirmedRequestCountMap = countConfirmedForEventList(events);
         List<ViewStatsDto> viewStatsDto = statsRequestService.makeStatRequest(events);
+        List<Long> viewStatsIds = new ArrayList<>();
+        if (!viewStatsDto.isEmpty()) {
+            for (ViewStatsDto statsDto : viewStatsDto) {
+                viewStatsIds.add(getEventId(statsDto));
+            }
+        }
 
         System.out.println("ЭТО ДЛЯ ОТЛАДКИ");
         System.out.println(events);
@@ -440,10 +446,15 @@ public class EventServiceImpl implements EventService {
         int i = 0;
         for (Event event : events) {
             int confirmedRequests = confirmedRequestCountMap.getOrDefault(event.getId(), List.of()).size();
-            long views = viewStatsDto.isEmpty() ? 0 : viewStatsDto.get(i).getHits();
+            long views = 0;
+            if (viewStatsIds.contains(event.getId())) {
+                views = viewStatsDto.get(viewStatsIds.indexOf(event.getId())).getHits();
+            }
             eventDtoList.add(EventMapper.toEventDto(event, confirmedRequests, views));
             i++;
         }
+
+        System.out.println(eventDtoList);
         return eventDtoList;
     }
 
