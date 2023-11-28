@@ -433,10 +433,10 @@ public class EventServiceImpl implements EventService {
             long views = 0;
 
             if (viewStatsDtoIdList.contains(event.getId())) {
-                viewStatsDtoIdList.remove(event.getId());
                 if (event.getState() == EventStateEnum.PUBLISHED) {
                     int index = viewStatsDtoIdList.indexOf(event.getId());
                     views = viewStatsDto.get(index).getHits();
+                    viewStatsDtoIdList.remove(event.getId());
                 }
             }
             eventDtoList.add(EventMapper.toEventDto(event, confirmedRequests, views));
