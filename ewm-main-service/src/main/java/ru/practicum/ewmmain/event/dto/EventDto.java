@@ -36,4 +36,5 @@ public class EventDto {
     private EventStateEnum state;
     private String title;
     private Integer views;
+    private Integer comments;
 }
