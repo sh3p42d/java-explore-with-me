@@ -3,6 +3,7 @@ package ru.practicum.ewmmain.comment.service;
 import ru.practicum.ewmmain.comment.dto.CommentDto;
 import ru.practicum.ewmmain.comment.dto.CommentFullDto;
 import ru.practicum.ewmmain.comment.dto.NewCommentDto;
+import ru.practicum.ewmmain.comment.dto.UpdateCommentDto;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface CommentService {
 
     List<CommentDto> getAllCommentsForEvent(long eventId);
 
-    CommentFullDto createComment(long userId, long eventId, NewCommentDto newCommentDto);
+    CommentFullDto createComment(long userId, NewCommentDto newCommentDto);
 
     CommentDto increaseLikesForComment(long userId, long eventId, long commId);
 
@@ -21,5 +22,5 @@ public interface CommentService {
 
     void deleteComment(long eventId, long commId);
 
-    CommentFullDto updateComment(long userId, long eventId, long commId, NewCommentDto newCommentDto);
+    CommentFullDto updateComment(long userId, UpdateCommentDto updateCommentDto);
 }

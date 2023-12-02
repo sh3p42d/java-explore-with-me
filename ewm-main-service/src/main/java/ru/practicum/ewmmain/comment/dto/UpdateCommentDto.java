@@ -12,9 +12,9 @@ import javax.validation.constraints.Size;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewCommentDto {
+public class UpdateCommentDto {
     @NotBlank(message = "Text комментария не должен быть пустой.")
     @Size(max = 1000, min = 20, message = "Длина строки должна быть от 20 до 1000 символов.")
     private String text;
-    private Long eventId;
+    private Long commentId;
 }

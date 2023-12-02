@@ -22,4 +22,5 @@ public class CommentFullDto {
     private CommentStatusEnum status;
     private Integer likes;
     private LocalDateTime created;
+    private LocalDateTime updated;
 }

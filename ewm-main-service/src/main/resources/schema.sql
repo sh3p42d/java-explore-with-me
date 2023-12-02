@@ -81,5 +81,6 @@ create table if not exists comments
     id_event  BIGINT REFERENCES events (id) ON DELETE CASCADE,
     likes     INT NOT NULL,
     created   TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL,
+    updated   TIMESTAMP WITHOUT TIME ZONE,
     status    VARCHAR NOT NULL
 );

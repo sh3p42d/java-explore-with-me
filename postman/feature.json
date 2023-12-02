@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "612e2dac-5be6-424d-a916-9b64b316dbe6",
+    "_postman_id": "e2fb6cb9-df02-4283-845f-ef3b04110fbb",
     "name": "Test Explore With Me - Comment feature",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "12557851"
@@ -34,19 +34,13 @@
                   "    const api = new API(pm);\r",
                   "    const rnd = new RandomUtils();\r",
                   "\r",
-                  "    let comment = rnd.getComment();\r",
-                  "    comment.text = rnd.getWord(19);\r",
                   "    try {\r",
                   "        const user = await api.addUser(rnd.getUser());\r",
-                  "        const user2 = await api.addUser(rnd.getUser());\r",
-                  "        pm.collectionVariables.set('uid', user2.id);\r",
+                  "        pm.collectionVariables.set('uid', user.id);\r",
                   "        const category = await api.addCategory(rnd.getCategory());\r",
-                  "        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
-                  "        pm.collectionVariables.set('eid', event.id);\r",
-                  "        await api.publishEvent(event.id);\r",
-                  "        let parcipate = await api.publishParticipationRequest(event.id, user2.id);\r",
-                  "        await api.acceptParticipationRequest(event.id, user.id, parcipate.id,)\r",
-                  "\r",
+                  "        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+                  "        comment = rnd.getComment(event.id);\r",
+                  "        comment.text = rnd.getWord(19);\r",
                   "    } catch(err) {\r",
                   "        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
                   "    }\r",
@@ -90,15 +84,13 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/users/{{uid}}/events/{{eid}}/comments",
+              "raw": "{{baseUrl}}/users/{{uid}}/comments",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "users",
                 "{{uid}}",
-                "events",
-                "{{eid}}",
                 "comments"
               ]
             }
@@ -130,20 +122,13 @@
                   "    const api = new API(pm);\r",
                   "    const rnd = new RandomUtils();\r",
                   "\r",
-                  "    let comment;\r",
-                  "    comment = rnd.getComment();\r",
-                  "    comment.text = rnd.getWord(1001);\r",
                   "    try {\r",
                   "        const user = await api.addUser(rnd.getUser());\r",
-                  "        const user2 = await api.addUser(rnd.getUser());\r",
-                  "        pm.collectionVariables.set('uid', user2.id);\r",
+                  "        pm.collectionVariables.set('uid', user.id);\r",
                   "        const category = await api.addCategory(rnd.getCategory());\r",
-                  "        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
-                  "        pm.collectionVariables.set('eid', event.id);\r",
-                  "        await api.publishEvent(event.id);\r",
-                  "        let parcipate = await api.publishParticipationRequest(event.id, user2.id);\r",
-                  "        await api.acceptParticipationRequest(event.id, user.id, parcipate.id,)\r",
-                  "\r",
+                  "        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+                  "        comment = rnd.getComment(event.id);\r",
+                  "        comment.text = rnd.getWord(1001);\r",
                   "    } catch(err) {\r",
                   "        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
                   "    }\r",
@@ -187,15 +172,13 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/users/{{uid}}/events/{{eid}}/comments",
+              "raw": "{{baseUrl}}/users/{{uid}}/comments",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "users",
                 "{{uid}}",
-                "events",
-                "{{eid}}",
                 "comments"
               ]
             }
@@ -227,20 +210,13 @@
                   "    const api = new API(pm);\r",
                   "    const rnd = new RandomUtils();\r",
                   "\r",
-                  "    let comment;\r",
-                  "    comment = rnd.getComment();\r",
-                  "    comment.text = null;\r",
                   "    try {\r",
                   "        const user = await api.addUser(rnd.getUser());\r",
-                  "        const user2 = await api.addUser(rnd.getUser());\r",
-                  "        pm.collectionVariables.set('uid', user2.id);\r",
+                  "        pm.collectionVariables.set('uid', user.id);\r",
                   "        const category = await api.addCategory(rnd.getCategory());\r",
-                  "        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
-                  "        pm.collectionVariables.set('eid', event.id);\r",
-                  "        await api.publishEvent(event.id);\r",
-                  "        let parcipate = await api.publishParticipationRequest(event.id, user2.id);\r",
-                  "        await api.acceptParticipationRequest(event.id, user.id, parcipate.id,)\r",
-                  "\r",
+                  "        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+                  "        comment = rnd.getComment(event.id);\r",
+                  "        comment.text = null;\r",
                   "    } catch(err) {\r",
                   "        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
                   "    }\r",
@@ -284,15 +260,13 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/users/{{uid}}/events/{{eid}}/comments",
+              "raw": "{{baseUrl}}/users/{{uid}}/comments",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "users",
                 "{{uid}}",
-                "events",
-                "{{eid}}",
                 "comments"
               ]
             }
@@ -313,20 +287,16 @@
               "    const rnd = new RandomUtils();  \r",
               "    try {\r",
               "        const user = await api.addUser(rnd.getUser());\r",
-              "        const user2 = await api.addUser(rnd.getUser());\r",
-              "        pm.collectionVariables.set('uid', user2.id);\r",
+              "        pm.collectionVariables.set('uid', user.id);\r",
               "        const category = await api.addCategory(rnd.getCategory());\r",
               "        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
-              "        pm.collectionVariables.set('eid', event.id);\r",
-              "        await api.publishEvent(event.id);\r",
-              "        let parcipate = await api.publishParticipationRequest(event.id, user2.id);\r",
-              "        await api.acceptParticipationRequest(event.id, user.id, parcipate.id,)\r",
+              "        comment = rnd.getComment(event.id);\r",
               "    } catch(err) {\r",
               "        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
               "    }\r",
               "    pm.request.body.update({\r",
               "        mode: 'raw',\r",
-              "        raw: JSON.stringify(rnd.getComment()),\r",
+              "        raw: JSON.stringify(comment),\r",
               "        options: { raw: { language: 'json' } }\r",
               "    });\r",
               "};\r",
@@ -388,15 +358,13 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/{{uid}}/events/{{eid}}/comments",
+          "raw": "{{baseUrl}}/users/{{uid}}/comments",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
             "{{uid}}",
-            "events",
-            "{{eid}}",
             "comments"
           ]
         }
@@ -415,22 +383,17 @@
               "    const rnd = new RandomUtils();  \r",
               "    try {\r",
               "        const user = await api.addUser(rnd.getUser());\r",
-              "        const user2 = await api.addUser(rnd.getUser());\r",
-              "        pm.collectionVariables.set('uid', user2.id);\r",
               "        const category = await api.addCategory(rnd.getCategory());\r",
               "        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
               "        pm.collectionVariables.set('eid', event.id);\r",
-              "        await api.publishEvent(event.id);\r",
-              "        let parcipate = await api.publishParticipationRequest(event.id, user2.id);\r",
-              "        await api.acceptParticipationRequest(event.id, user.id, parcipate.id,)\r",
-              "        let comment = await api.addComment(user2.id, event.id, rnd.getComment());\r",
+              "        comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
               "        pm.collectionVariables.set('commId', comment.id);\r",
               "    } catch(err) {\r",
               "        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
               "    }\r",
               "    pm.request.body.update({\r",
               "        mode: 'raw',\r",
-              "        raw: JSON.stringify(rnd.getComment()),\r",
+              "        raw: comment,\r",
               "        options: { raw: { language: 'json' } }\r",
               "    });\r",
               "};\r",
@@ -520,22 +483,17 @@
               "    const rnd = new RandomUtils();  \r",
               "    try {\r",
               "        const user = await api.addUser(rnd.getUser());\r",
-              "        const user2 = await api.addUser(rnd.getUser());\r",
-              "        pm.collectionVariables.set('uid', user2.id);\r",
+              "        pm.collectionVariables.set('uid', user.id);\r",
               "        const category = await api.addCategory(rnd.getCategory());\r",
               "        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
               "        pm.collectionVariables.set('eid', event.id);\r",
-              "        await api.publishEvent(event.id);\r",
-              "        let parcipate = await api.publishParticipationRequest(event.id, user2.id);\r",
-              "        await api.acceptParticipationRequest(event.id, user.id, parcipate.id,)\r",
-              "        let comment = await api.addComment(user2.id, event.id, rnd.getComment());\r",
-              "        pm.collectionVariables.set('commId', comment.id);\r",
+              "        comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
               "    } catch(err) {\r",
               "        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
               "    }\r",
               "    pm.request.body.update({\r",
               "        mode: 'raw',\r",
-              "        raw: JSON.stringify(rnd.getComment()),\r",
+              "        raw: JSON.stringify(rnd.getUpdateComment(comment.id)),\r",
               "        options: { raw: { language: 'json' } }\r",
               "    });\r",
               "};\r",
@@ -601,17 +559,14 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/{{uid}}/events/{{eid}}/comments/{{commId}}",
+          "raw": "{{baseUrl}}/users/{{uid}}/comments",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
             "{{uid}}",
-            "events",
-            "{{eid}}",
-            "comments",
-            "{{commId}}"
+            "comments"
           ]
         }
       },
@@ -629,24 +584,18 @@
               "    const rnd = new RandomUtils();  \r",
               "    try {\r",
               "        const user = await api.addUser(rnd.getUser());\r",
-              "        const user2 = await api.addUser(rnd.getUser());\r",
-              "        pm.collectionVariables.set('uid', user2.id);\r",
+              "        pm.collectionVariables.set('uid', user.id);\r",
               "        const category = await api.addCategory(rnd.getCategory());\r",
               "        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
               "        pm.collectionVariables.set('eid', event.id);\r",
-              "        await api.publishEvent(event.id);\r",
-              "        let parcipate = await api.publishParticipationRequest(event.id, user2.id);\r",
-              "        await api.acceptParticipationRequest(event.id, user.id, parcipate.id,);\r",
-              "        \r",
-              "        let comment = await api.addComment(user2.id, event.id, rnd.getComment());\r",
-              "        pm.collectionVariables.set('commId', comment.id);\r",
+              "        comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
               "        await api.publishComment(event.id, comment.id);\r",
               "    } catch(err) {\r",
               "        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
               "    }\r",
               "    pm.request.body.update({\r",
               "        mode: 'raw',\r",
-              "        raw: JSON.stringify(rnd.getComment()),\r",
+              "        raw: JSON.stringify(rnd.getUpdateComment(comment.id)),\r",
               "        options: { raw: { language: 'json' } }\r",
               "    });\r",
               "};\r",
@@ -698,17 +647,14 @@
           }
         },
         "url": {
-          "raw": "{{baseUrl}}/users/{{uid}}/events/{{eid}}/comments/{{commId}}",
+          "raw": "{{baseUrl}}/users/{{uid}}/comments",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "users",
             "{{uid}}",
-            "events",
-            "{{eid}}",
-            "comments",
-            "{{commId}}"
+            "comments"
           ]
         }
       },
@@ -726,16 +672,11 @@
               "    const rnd = new RandomUtils();  \r",
               "    try {\r",
               "        const user = await api.addUser(rnd.getUser());\r",
-              "        const user2 = await api.addUser(rnd.getUser());\r",
-              "        pm.collectionVariables.set('uid', user2.id);\r",
+              "        pm.collectionVariables.set('uid', user.id);\r",
               "        const category = await api.addCategory(rnd.getCategory());\r",
               "        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
               "        pm.collectionVariables.set('eid', event.id);\r",
-              "        await api.publishEvent(event.id);\r",
-              "        let parcipate = await api.publishParticipationRequest(event.id, user2.id);\r",
-              "        await api.acceptParticipationRequest(event.id, user.id, parcipate.id,);\r",
-              "        \r",
-              "        let comment = await api.addComment(user2.id, event.id, rnd.getComment());\r",
+              "        comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
               "        pm.collectionVariables.set('commId', comment.id);\r",
               "        await api.publishComment(event.id, comment.id);\r",
               "    } catch(err) {\r",
@@ -743,7 +684,7 @@
               "    }\r",
               "    pm.request.body.update({\r",
               "        mode: 'raw',\r",
-              "        raw: JSON.stringify(rnd.getComment()),\r",
+              "        raw: JSON.stringify(comment),\r",
               "        options: { raw: { language: 'json' } }\r",
               "    });\r",
               "};\r",
@@ -1101,8 +1042,8 @@
           "        return this.patch('/users/' + userId + '/events/' + eventId + '/requests/', {requestIds:[reqId], status: \"CONFIRMED\"}, \"Ошибка при принятии заявки на участие в событии\", verbose);",
           "    }",
           "",
-          "    async addComment(userId, eventId, comment, verbose=null){",
-          "        return this.post('/users/' + userId + '/events/' + eventId + '/comments', comment, \"Ошибка при добавлении нового комментария: \", verbose);",
+          "    async addComment(userId, comment, verbose=null) {",
+          "        return this.post('/users/' + userId + '/comments', comment, \"Ошибка при добавлении нового комментария\", verbose);",
           "    }",
           "",
           "    async editComment(userId, eventId, commId, verbose=null){",
@@ -1200,10 +1141,18 @@
           "        }",
           "    }",
           "",
-          "    getComment(){",
-          "        return{",
-          "            text: pm.variables.replaceIn('{{$randomLoremParagraph}}')",
+          "    getComment(id){",
+          "        return {",
+          "            text: pm.variables.replaceIn('{{$randomLoremParagraph}}'),",
+          "            eventId: id",
           "        }",
+          "    }",
+          "",
+          "    getUpdateComment(id) {",
+          "        return {",
+          "            text: pm.variables.replaceIn('{{$randomLoremParagraph}}'),",
+          "            commentId: id",
+          "        };",
           "    }",
           "",
           "    getFutureDateTime(hourShift = 5, minuteShift=0, yearShift=0) {",

@@ -7,35 +7,39 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmmain.comment.dto.CommentDto;
 import ru.practicum.ewmmain.comment.dto.CommentFullDto;
 import ru.practicum.ewmmain.comment.dto.NewCommentDto;
+import ru.practicum.ewmmain.comment.dto.UpdateCommentDto;
 import ru.practicum.ewmmain.comment.service.CommentService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
-@RequestMapping(path = "/users/{userId}/events/{eventId}/comments")
+@RequestMapping(path = "/users/{userId}")
 @RequiredArgsConstructor
 @Validated
 public class CommentPrivateController {
 
     private final CommentService commentService;
 
-    @PostMapping
+    @GetMapping("/comments")
+    public List<CommentFullDto> getAllForUser(@PathVariable long userId) {
+        return commentService.getAllForUser(userId);
+    }
+
+    @PostMapping("/comments")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentFullDto postComment(@PathVariable long userId,
-                                      @PathVariable long eventId,
                                       @Valid @RequestBody NewCommentDto newCommentDto) {
-        return commentService.createComment(userId, eventId, newCommentDto);
+        return commentService.createComment(userId, newCommentDto);
     }
 
-    @PatchMapping("/{commId}")
+    @PatchMapping("/comments")
     public CommentFullDto updateComment(@PathVariable long userId,
-                                      @PathVariable long eventId,
-                                      @PathVariable long commId,
-                                      @Valid @RequestBody NewCommentDto newCommentDto) {
-        return commentService.updateComment(userId, eventId, commId, newCommentDto);
+                                      @Valid @RequestBody UpdateCommentDto updateCommentDto) {
+        return commentService.updateComment(userId, updateCommentDto);
     }
 
-    @PatchMapping("/{commId}/likes")
+    @PatchMapping("/events/{eventId}/comments/{commId}/likes")
     public CommentDto updateCommentLikes(@PathVariable long userId,
                                   @PathVariable long eventId,
                                   @PathVariable long commId) {

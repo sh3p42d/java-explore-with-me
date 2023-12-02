@@ -23,6 +23,7 @@ public class CommentMapper {
                 .author(UserMapper.toUserMinDto(comment.getAuthor()))
                 .event(EventMapper.toEventCommentDto(comment.getEvent()))
                 .created(comment.getCreated())
+                .updated(comment.getUpdated())
                 .likes(comment.getLikes())
                 .status(comment.getStatus())
                 .build();
@@ -44,6 +45,7 @@ public class CommentMapper {
                 .id(comment.getId())
                 .author(UserMapper.toUserMinDto(comment.getAuthor()))
                 .created(comment.getCreated())
+                .updated(comment.getUpdated())
                 .likes(comment.getLikes())
                 .text(comment.getText())
                 .build();

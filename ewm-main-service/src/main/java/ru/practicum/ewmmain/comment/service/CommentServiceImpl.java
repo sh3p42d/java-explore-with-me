@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmmain.comment.dto.CommentDto;
 import ru.practicum.ewmmain.comment.dto.CommentFullDto;
 import ru.practicum.ewmmain.comment.dto.NewCommentDto;
+import ru.practicum.ewmmain.comment.dto.UpdateCommentDto;
 import ru.practicum.ewmmain.comment.error.CommentEventOrUserException;
 import ru.practicum.ewmmain.comment.error.CommentNotAllowed;
 import ru.practicum.ewmmain.comment.error.CommentNotFoundException;
@@ -23,6 +24,7 @@ import ru.practicum.ewmmain.user.error.UserNotFoundException;
 import ru.practicum.ewmmain.user.model.User;
 import ru.practicum.ewmmain.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,8 +66,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentFullDto createComment(long userId, long eventId, NewCommentDto newCommentDto) {
+    public CommentFullDto createComment(long userId, NewCommentDto newCommentDto) {
         User user = checkUser(userId);
+        long eventId = newCommentDto.getEventId();
         Event event = checkEvent(eventId);
 
         Request request = requestRepository.findByEvent_IdAndRequester_Id(eventId, userId);
@@ -89,10 +92,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentFullDto updateComment(long userId, long eventId, long commId, NewCommentDto newCommentDto) {
+    public CommentFullDto updateComment(long userId, UpdateCommentDto updateCommentDto) {
         checkUser(userId);
-        checkEvent(eventId);
+        long commId = updateCommentDto.getCommentId();
         Comment comment = checkComment(commId);
+
+        checkEvent(comment.getEvent().getId());
 
         if (comment.getStatus().equals(CommentStatusEnum.PUBLISHED)) {
             throw new CommentNotAllowed(comment.getStatus().toString());
@@ -103,8 +108,9 @@ public class CommentServiceImpl implements CommentService {
                             "т.к. не является его автором", userId));
         }
 
-        comment.setText(newCommentDto.getText());
+        comment.setText(updateCommentDto.getText());
         comment.setStatus(CommentStatusEnum.PENDING);
+        comment.setUpdated(LocalDateTime.now());
 
         return CommentMapper.toCommentFullDto(commentRepository.save(comment));
     }
@@ -151,6 +157,7 @@ public class CommentServiceImpl implements CommentService {
                     comment.setStatus(CommentStatusEnum.PUBLISHED);
                 }
         }
+        comment.setUpdated(LocalDateTime.now());
         commentRepository.save(comment);
         return CommentMapper.toCommentFullDto(comment);
     }
