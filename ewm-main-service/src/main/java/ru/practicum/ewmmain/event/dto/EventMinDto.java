@@ -25,4 +25,5 @@ public class EventMinDto {
     private Boolean paid;
     private String title;
     private Integer views;
+    private Integer comments;
 }

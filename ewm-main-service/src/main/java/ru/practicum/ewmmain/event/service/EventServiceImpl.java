@@ -12,6 +12,8 @@ import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.ewmmain.category.error.CategoryNotFoundException;
 import ru.practicum.ewmmain.category.model.Category;
 import ru.practicum.ewmmain.category.repository.CategoryRepository;
+import ru.practicum.ewmmain.comment.model.CommentStatusEnum;
+import ru.practicum.ewmmain.comment.repository.CommentRepository;
 import ru.practicum.ewmmain.event.error.EventNotAllowedException;
 import ru.practicum.ewmmain.event.error.EventNotFoundException;
 import ru.practicum.ewmmain.event.error.StartTimeAndEndTimeException;
@@ -59,6 +61,7 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public List<EventDto> getAllForAdmin(List<Long> users,
@@ -418,7 +421,9 @@ public class EventServiceImpl implements EventService {
             views = viewStatsDto.isEmpty() ? 0 : viewStatsDto.get(0).getHits();
         }
 
-        return EventMapper.toEventDto(event, confirmedRequests, views);
+        Integer comments = getCommentsCount(event.getId());
+
+        return EventMapper.toEventDto(event, confirmedRequests, views, comments);
     }
 
     private Map<Long, List<Request>> countConfirmedForEventList(List<Event> events) {
@@ -444,10 +449,15 @@ public class EventServiceImpl implements EventService {
             if (viewStatsIds.contains(event.getId())) {
                 views = viewStatsDto.get(viewStatsIds.indexOf(event.getId())).getHits();
             }
-            eventDtoList.add(EventMapper.toEventDto(event, confirmedRequests, views));
+            Integer comments = getCommentsCount(event.getId());
+            eventDtoList.add(EventMapper.toEventDto(event, confirmedRequests, views, comments));
         }
 
         return eventDtoList;
+    }
+
+    public Integer getCommentsCount(Long eventId) {
+        return commentRepository.countAllByEvent_IdAndStatus(eventId, CommentStatusEnum.PUBLISHED);
     }
 
     private static long getEventId(ViewStatsDto viewStatsDto) {

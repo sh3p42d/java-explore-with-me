@@ -10,6 +10,9 @@ import ru.practicum.client.config.exceptions.ClientRequestException;
 import ru.practicum.ewmmain.category.error.CategoryExistsException;
 import ru.practicum.ewmmain.category.error.CategoryNotFoundException;
 import ru.practicum.ewmmain.category.error.CategoryWithEventsException;
+import ru.practicum.ewmmain.comment.error.CommentEventOrUserException;
+import ru.practicum.ewmmain.comment.error.CommentNotAllowed;
+import ru.practicum.ewmmain.comment.error.CommentNotFoundException;
 import ru.practicum.ewmmain.compilation.error.CompilationExistsException;
 import ru.practicum.ewmmain.compilation.error.CompilationNotFoundException;
 import ru.practicum.ewmmain.event.error.EventNotAllowedException;
@@ -63,6 +66,18 @@ public class ErrorExceptionHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse errorResponse(CommentNotAllowed e) {
+        return new ErrorResponse("Конфликт у Comment: ", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse errorResponse(CommentEventOrUserException e) {
+        return new ErrorResponse("Конфликт у Comment с Event и User : ", e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleStatsRequestException(final ClientRequestException e) {
         return new ErrorResponse("Ошибка сервера статистики: ", e.getMessage());
@@ -79,7 +94,8 @@ public class ErrorExceptionHandler {
             CompilationNotFoundException.class,
             EventNotFoundException.class,
             RequestNotFoundException.class,
-            UserNotFoundException.class
+            UserNotFoundException.class,
+            CommentNotFoundException.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse errorResponse(EntityNotFoundException e) {
